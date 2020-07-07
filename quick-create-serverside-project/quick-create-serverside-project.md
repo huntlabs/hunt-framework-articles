@@ -200,15 +200,15 @@ class UserForm : Form
     mixin MakeForm;
 
 
-    @Length (4, 30, "user name length must be between {min} and {Max}} bits. ""
+    @Length (4, 30, "user name length must be between {min} and {Max}} bits.")
     string username;
 
 
-    @Length (8, 32, "password length must be between {min} and {Max} bits. ""
+    @Length (8, 32, "password length must be between {min} and {Max} bits.")
     string password;
 
 
-    @Notempty ("email address cannot be empty. ""
+    @Notempty ("email address cannot be empty.")
     string email;
 }
 
@@ -247,8 +247,7 @@ class UserController : Controller
             //Give me an error code
             resultMessage.code = 10001;
 
-
-            / / valid.messages The () method can get all the error information. Here we simply get one error and return it
+            // The valid.messages() method can get all the error information. Here we simply get one error and return it
             foreach (message; valid.messages())
             {
                 resultMessage.message = message;
@@ -265,16 +264,16 @@ class UserController : Controller
             user.password = form.password ;
             user.email = form.email ;
 
-            //Save model data to database
+            // Save model data to database
             repository.save (user);
 
-            //Because there is no error, you don`t need to set the error code. You can prompt the successful addition
+            // Because there is no error, you don`t need to set the error code. You can prompt the successful addition
 
             import std.format : format;
             resultMessage.message =Format! "User (% d) added successfully! "( user.id );
         }
 
-        //The returned result object is automatically serialized by jsonresponse to JSON and returned to the client
+        // The returned result object is automatically serialized by JsonResponse to JSON and returned to the client
         return new JsonResponse(resultMessage);
     }
 }
