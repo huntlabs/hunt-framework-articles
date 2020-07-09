@@ -1,4 +1,4 @@
-# Quick create serverside project using D Programming Language
+# Quick create serverside project using D Programming Language!
 
 `Hunt framework` is a full stack web framework developed in D language, similar to larravel / springboot / Django, etc., which allows D language developers to quickly create projects. It has built-in multi business specifications. One is to facilitate developers to use it out of the box; the other is to facilitate managers to review the project code more easily.
 
@@ -29,7 +29,9 @@ We can see the source code of `source/app/controller/IndexController.d`. This is
 
 ```D
 module app.controller.IndexController;
+
 import hunt.framework;
+
 class IndexController : Controller
 {
     mixin MakeController;
@@ -37,6 +39,8 @@ class IndexController : Controller
     @Action
     string index()
     {
+        view.assign("version", "3.2.0");
+
         return view.render("index");
     }
 }
@@ -50,7 +54,7 @@ The view here will render `resources/views/default/index.html` Template file.
 The default routing configuration table `config/routes` can be found in the configuration file directory. There is a record in the skeleton project as follows:
 
 ```conf
-GET    /     index.index
+GET    /    index.index
 ```
 
 This semantics is to use the `GET` method to access `/` this path will be mapped to the `index` function of the `IndexController` controller.
