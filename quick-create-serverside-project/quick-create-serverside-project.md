@@ -1,4 +1,4 @@
-# Quick create serverside project based on Hunt Framework 3.2.0
+# Quick create serverside project using D Programming Language
 
 `Hunt framework` is a full stack web framework developed in D language, similar to larravel / springboot / Django, etc., which allows D language developers to quickly create projects. It has built-in multi business specifications. One is to facilitate developers to use it out of the box; the other is to facilitate managers to review the project code more easily.
 
@@ -11,7 +11,7 @@ This sample code is based on the latest `Hunt framework` version `3.2.0`. Let`s 
 First, use the `git` command to clone the skeleton project locally.
 
 ```bash
-git clone  https://github.com/huntlabs/hunt-skeleton.git  myproject
+git clone https://github.com/huntlabs/hunt-skeleton.git myproject
 cd myproject
 ```
 
@@ -28,15 +28,16 @@ http.port  = 8080
 We can see the source code of `source/app/controller/IndexController.d`. This is a common controller. The code is as follows:
 
 ```D
-module  app.controller.IndexController ;
-import  hunt.framework ;
+module app.controller.IndexController;
+import hunt.framework;
 class IndexController : Controller
 {
     mixin MakeController;
+
     @Action
     string index()
     {
-        return view.render ("index");
+        return view.render("index");
     }
 }
 ```
@@ -100,19 +101,22 @@ You can execute this SQL to create a table by yourself. Our database uses the ex
 ```SQL
 SET NAMES utf8mb4;
 SET FOREIGN_ KEY_ CHECKS = 0;
+
 -- ----------------------------
 -- Table structure for my_ user
 -- ----------------------------
 DROP TABLE IF EXISTS `my_ users`;
+
 CREATE TABLE `my_ users` (
-`id` bigint(20) NOT NULL AUTO_ INCREMENT,
-`username` varchar(255) DEFAULT NULL,
-`password` varchar(255) DEFAULT NULL,
-`email` varchar(255) DEFAULT NULL,
-`created` bigint(11) DEFAULT NULL,
-`updated` bigint(11) DEFAULT NULL,
-PRIMARY KEY (`id`)
+    `id` bigint(20) NOT NULL AUTO_ INCREMENT,
+    `username` varchar(255) DEFAULT NULL,
+    `password` varchar(255) DEFAULT NULL,
+    `email` varchar(255) DEFAULT NULL,
+    `created` bigint(11) DEFAULT NULL,
+    `updated` bigint(11) DEFAULT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 SET FOREIGN_ KEY_ CHECKS = 1;
 ```
 
@@ -127,7 +131,7 @@ database.port  = 3306
 database.database  = myproject
 database.username  = root
 database.password  = 123456
-database.charset  = utf8
+database.charset  = utf8mb4
 database.prefix  = my_
 database.enabled  = true
 ```
@@ -140,7 +144,7 @@ We create the model class:
 ```D
 module app.model.User;
 
-import hunt.entity;
+import hunt.framework;
 
 @Table("users")
 class User : Model
@@ -170,17 +174,16 @@ This object only needs to inherit `EntityRepository`. It already contains a lot 
 `app/repository/UserRepository.d`
 
 ```D
-
 module app.repository.UserRepository;
 
 import hunt.framework;
+
 import app.model.User;
 
 class UserRepostiroy : EntityRepository!(User, ulong)
 {
 
 }
-
 ```
 
 Here, the inherited `EntityRepository` of our custom `UserRepository` is the class of `Hunt entity`. We pass the user-defined model class` user `and primary key type` ulong `by template value passing. This compilation will help us deal with a lot of things. We just need to remember how to write them.
@@ -192,28 +195,23 @@ As an API, it is difficult to receive and verify post forms. The `Hunt framework
 ```D
 module app.form.UserForm;
 
-import hunt.framework ;
+import hunt.framework;
 
 class UserForm : Form
 {
-
     mixin MakeForm;
-
 
     @Length (4, 30, "user name length must be between {min} and {Max}} bits.")
     string username;
 
-
     @Length (8, 32, "password length must be between {min} and {Max} bits.")
     string password;
-
 
     @Notempty ("email address cannot be empty.")
     string email;
 }
 
 ```
-
 
 ### 2.7 create the controller corresponding to API
 
@@ -222,11 +220,12 @@ Because our API uses an independent routing group, we need to create a subdirect
 ```D
 module app.controller.api.UserController;
 
-import hunt.framework ;
-import app.repository.UserRepostiroy ;
-import app.model.User ;
-import app.message.ResultMessage ;
-import app.form.UserForm ;
+import hunt.framework;
+
+import app.repository.UserRepostiroy;
+import app.model.User;
+import app.message.ResultMessage;
+import app.form.UserForm;
 
 class UserController : Controller
 {
@@ -235,15 +234,14 @@ class UserController : Controller
     @Action
     Response add(UserForm form)
     {
-        //Resultmessage is the body of the JSON message to be returned
+        // Resultmessage is the body of the JSON message to be returned
         auto resultMessage = new ResultMessage;
 
-        //Use the valid () method to get a verification result object
+        // Use the valid () method to get a verification result object
         auto valid = form.valid ();
 
         if (! valid.isValid ())
         {
-
             //Give me an error code
             resultMessage.code = 10001;
 
@@ -253,16 +251,15 @@ class UserController : Controller
                 resultMessage.message = message;
                 break;
             }
-
         }
         else
         {
             auto repository = new UserRepository;
 
             auto user = new User;
-            user.username = form.username ;
-            user.password = form.password ;
-            user.email = form.email ;
+            user.username = form.username;
+            user.password = form.password;
+            user.email = form.email;
 
             // Save model data to database
             repository.save (user);
@@ -309,7 +306,7 @@ Is it easy? Here because it is `config/api.routes` Therefore, the controller wil
 
 Here, we use the Firefox plug-in to make interface requests. We add three fields according to the requirements of the form, which are `username`, `password`, `email`. We also fill in according to the verification rules in `UserForm`. When we submit the form, we can see the following interface:
 
-![myuser-useradd.png](attachments/myuser-useradd.png))
+![myuser-useradd.png](attachments/myuser-useradd.png)
 
 Here prompt `user (9) added successfully!` The number '9' here is actually the primary key ID returned after we write the user data into the database.
 
@@ -368,4 +365,5 @@ The whole project is also clear and clear. It has a familiar flavor in the use o
 
 * Huntlabs official website: https://www.huntlabs.net
 * Hunt framework code base: https://github.com/huntlabs/hunt-framework
+* Hunt framework documentations: https://github.com/huntlabs/hunt-framework-documentation
 * Complete sample code: https://github.com/zoujiaqing/example-myuser
